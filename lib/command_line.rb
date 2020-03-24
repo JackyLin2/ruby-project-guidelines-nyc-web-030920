@@ -45,67 +45,84 @@ def age_permit
 end
 
 def exit 
-   puts "You cannot travel alone if you are under 21"
+   puts "You cannot travel alone if you are under 21."
 end 
 
 def choices
    prompt = TTY::Prompt.new
-   choices = prompt.select("Chose next option") do |option|
+   pick = prompt.select("Choose next option") do |option|
       option.choice "Create Reservation" 
       option.choice "View Confirmation"
-      option.choice "Change Date" 
+      option.choice "Change Location" 
       option.choice "Cancel Reservation"
+      option.choice "Exit Easy Reservation"
    end 
-   selection = prompt.select("You have selected", choices)
-     if selection == "Create Reservation"
-      puts "Check-in YYYYMMDD:"
-      check_in = gets.chomp
-      puts "Check-out YYYYMMDD:"
-      check_out = gets.chomp
+   # selection = prompt.select("You have selected", choices)
+     if pick == "Create Reservation"
+      puts "Check-in YYYY/MM/DD:"
+      @check_in = gets.chomp
+      puts "Check-out YYYY/MM/DD:"
+      @check_out = gets.chomp
       puts "Going to:"
-      location = gets.chomp
+      @location = gets.chomp
 
       #Reservation.find_or_create_by(user_id: user.id, hotel_id: hotel.id, check_in: check_in, check_out: check_out, location: location) 
       puts "Please select wich Hotel you would like to stay at"
       prompt = TTY::Prompt.new 
-      select_hotel = prompt.select("Hotel List") do |hotel|
+      @select_hotel = prompt.select("Hotel List") do |hotel|
          hotel.choice "Wyndham Hotel Group"
          hotel.choice "Marriott International"
          hotel.choice "Hilton Hotels"
          hotel.choice "Starwood Hotels & Resorts"
       end
           price = rand(200...2000)
-          puts "Staying at #{select_hotel} will cost a total of $#{price}"
+          puts "Staying at #{@select_hotel} will cost a total of $#{price}"
           confirmation_check = prompt.yes?("Do you want to confirm?")
            if confirmation_check == true 
             puts "Confirmation check"
-            hotel = Hotel.find_by(name: select_hotel)
-            Reservation.create(user_id: user_name.id, hotel_id: hotel.id, check_in: check_in, check_out: check_out, location: location)
+            hotel = Hotel.find_by(name: @select_hotel)
+           reservation= Reservation.create(user_id: user_name.id, hotel_id: hotel.id, check_in: @check_in, check_out: @check_out, location: @location)
             puts "Reservation Confirmed"
-            p Reservation.all.last
+            choices
+            # p Reservation.all.last
            end
+           
    elsif
-      selection == "View Confirmation"
+      pick == "View Confirmation"
       view_confirmation
    elsif
-      selection == "Change Date"
-      change_date
+      pick == "Change Location"
+      change_location(reservation)
+   elsif
+      pick == "Cancel Reservation"
+      cancel_reservation
+   else   
+      pick == "Exit Easy Reservation"
+      exit_app
    end
 end
 
 def view_confirmation
-   puts "You are confirmed for "
+   puts "Your stay for #{@location} has been confirmed. Your check-in date is at #{@check_in} and your check-out date is at #{@check_out} "
+   choices
 end
 
-def change_date(reservation)
-   new_date=gets.chomp
-   reservation.check_in = new_date 
-puts "We have changed"
-
+def change_location(reservation)
+   puts "Where would you like to go?"
+   new_location = gets.chomp
+   @location = new_location
+   puts "Your updated location is now #{new_location}"
+   choices 
 end
 
+def cancel_reservation
+   Reservation.last.delete 
+   puts "Your reservation has been cancelled."
+end
 
-
+def exit_app
+   puts "Thank you for choosing Easy Reservation."
+end 
 
 
 

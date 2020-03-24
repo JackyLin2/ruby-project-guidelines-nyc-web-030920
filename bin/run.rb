@@ -9,5 +9,9 @@ cli.get_age
 #user = cli.name_greet 
 cli.age_permit
 cli.user_name
+# cli.choices
+# cli.choices
+# cli.choices
+# cli.choices
+# cli.choices
 
-cli.choices
