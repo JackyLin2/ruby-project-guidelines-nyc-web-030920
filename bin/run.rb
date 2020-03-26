@@ -1,7 +1,7 @@
 require_relative '../config/environment'
 
 cli = CommandLineInterface.new
-
+cli.drawing
 cli.greet 
 cli.get_name
 cli.get_age
